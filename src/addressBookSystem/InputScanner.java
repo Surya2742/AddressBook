@@ -8,7 +8,4 @@ public class InputScanner {
         return scanner.next();
     }
 
-    public void scannerClose() {
-        scanner.close();
-    }
 }

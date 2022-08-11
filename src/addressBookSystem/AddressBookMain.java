@@ -4,52 +4,97 @@ public class AddressBookMain {
     public static void main(String[] args) {
         System.out.println("Welcome to Address Book System");
 
-        AddressBook contact = new AddressBook();
-        System.out.println("Enter Following Contact Details.");
-        InputScanner is = new InputScanner();
+        AddressBook personContactOne = new AddressBook();
+        System.out.println("Enter Following Contact Details for Person 1.");
+        InputScanner isOne = new InputScanner();
 
         System.out.print("Enter First Name : ");
-        String contactFirstName = is.inputString();
-        contact.setFirstName(contactFirstName);
+        String contactFirstName = isOne.inputString();
+        personContactOne.setFirstName(contactFirstName);
 
         System.out.print("Enter Last Name : ");
-        String contactLastName = is.inputString();
-        contact.setLastName(contactLastName);
+        String contactLastName = isOne.inputString();
+        personContactOne.setLastName(contactLastName);
 
         System.out.print("Enter Address : ");
-        String contactAddress = is.inputString();
-        contact.setAddress(contactAddress);
+        String contactAddress = isOne.inputString();
+        personContactOne.setAddress(contactAddress);
 
         System.out.print("Enter City : ");
-        String contactCity = is.inputString();
-        contact.setCity(contactCity);
+        String contactCity = isOne.inputString();
+        personContactOne.setCity(contactCity);
 
         System.out.print("Enter State : ");
-        String contactState = is.inputString();
-        contact.setState(contactState);
+        String contactState = isOne.inputString();
+        personContactOne.setState(contactState);
 
         System.out.print("Enter Zip : ");
-        String contactZip = is.inputString();
-        contact.setZip(contactZip);
+        String contactZip = isOne.inputString();
+        personContactOne.setZip(contactZip);
 
         System.out.print("Enter Phone Number : ");
-        String contactPhoneNumber = is.inputString();
-        contact.setPhoneNumber(contactPhoneNumber);
+        String contactPhoneNumber = isOne.inputString();
+        personContactOne.setPhoneNumber(contactPhoneNumber);
 
         System.out.print("Enter Email : ");
-        String contactEmail = is.inputString();
-        contact.setEmail(contactEmail);
+        String contactEmail = isOne.inputString();
+        personContactOne.setEmail(contactEmail);
+//-----------------------------------------------------------------------------------------------
+        AddressBook personContactTwo = new AddressBook();
+        System.out.println("Enter Following Contact Details for Person 2.");
+        InputScanner isTwo = new InputScanner();
 
-        is.scannerClose();
+        System.out.print("Enter First Name : ");
+        personContactTwo.setFirstName(isTwo.inputString());
 
-        System.out.println("First Name: " + contact.firstName);
-        System.out.println("Last Name: " + contact.lastName);
-        System.out.println("Address: " + contact.address);
-        System.out.println("City: " + contact.city);
-        System.out.println("State: " + contact.state);
-        System.out.println("Zip: " + contact.zip);
-        System.out.println("Phone Number: " + contact.phoneNumber);
-        System.out.println("Email: " + contact.email);
+        System.out.print("Enter Last Name : ");
+        personContactTwo.setLastName(isTwo.inputString());
+
+        System.out.print("Enter Address : ");
+        personContactTwo.setAddress(isTwo.inputString());
+
+        System.out.print("Enter City : ");
+        personContactTwo.setCity(isTwo.inputString());
+
+        System.out.print("Enter State : ");
+        personContactTwo.setState(isTwo.inputString());
+
+        System.out.print("Enter Zip : ");
+        personContactTwo.setZip(isTwo.inputString());
+
+        System.out.print("Enter Phone Number : ");
+        personContactTwo.setPhoneNumber(isTwo.inputString());
+
+        System.out.print("Enter Email : ");
+        personContactTwo.setEmail(isTwo.inputString());
+//-----------------------------------------------------------------------------------------------
+        AddressBook personContactThree = new AddressBook();
+        System.out.println("Enter Following Contact Details for Person 3.");
+        InputScanner isThree = new InputScanner();
+
+        System.out.print("Enter First Name : ");
+        personContactThree.setFirstName(isThree.inputString());
+
+        System.out.print("Enter Last Name : ");
+        personContactThree.setLastName(isThree.inputString());
+
+        System.out.print("Enter Address : ");
+        personContactThree.setAddress(isThree.inputString());
+
+        System.out.print("Enter City : ");
+        personContactThree.setCity(isThree.inputString());
+
+        System.out.print("Enter State : ");
+        personContactThree.setState(isThree.inputString());
+
+        System.out.print("Enter Zip : ");
+        personContactThree.setZip(isThree.inputString());
+
+        System.out.print("Enter Phone Number : ");
+        personContactThree.setPhoneNumber(isThree.inputString());
+
+        System.out.print("Enter Email : ");
+        personContactThree.setEmail(isThree.inputString());
 
     }
 }
