@@ -3,6 +3,7 @@ package addressBookSystem;
 public class AddressBookMain {
     public static void main(String[] args) {
         System.out.println("Welcome to Address Book System");
+        AddressBookInterface abi = new AddressBookInterface();
 
         AddressBook personContactOne = new AddressBook();
         System.out.println("Enter Following Contact Details for Person 1.");
@@ -95,6 +96,28 @@ public class AddressBookMain {
 
         System.out.print("Enter Email : ");
         personContactThree.setEmail(isThree.inputString());
+        System.out.println("\nContact Number 1.");
+        abi.view(personContactOne);
+        System.out.println("\nContact Number 2.");
+        abi.view(personContactTwo);
+        System.out.println("\nContact Number 3.");
+        abi.view(personContactThree);
 
+        InputScanner is3 = new InputScanner();
+        System.out.println("Enter name of contact you want to edit");
+        String name = is3.inputString();
+        if(personContactOne.firstName.equalsIgnoreCase(name) == true)
+            abi.edit(personContactOne);
+        else if(personContactTwo.firstName.equalsIgnoreCase(name) == true)
+            abi.edit(personContactTwo);
+        else if(personContactThree.firstName.equalsIgnoreCase(name) == true)
+            abi.edit(personContactThree);
+        System.out.println("Contact List after editing AddressBook.");
+        System.out.println("\nContact Number 1.");
+        abi.view(personContactOne);
+        System.out.println("\nContact Number 2.");
+        abi.view(personContactTwo);
+        System.out.println("\nContact Number 3.");
+        abi.view(personContactThree);
     }
 }
