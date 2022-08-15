@@ -1,36 +1,56 @@
 package addressBookSystem;
 
+import java.util.Set;
+
 public class AddressBook {
 
-    void view(PersonDetails contact) {
-        System.out.println("\nFirst Name\t:\t" + contact.firstName);
-        System.out.println("Last Name\t:\t" + contact.lastName);
-        System.out.println("Address\t\t:\t" + contact.address);
-        System.out.println("City\t\t:\t" + contact.city);
-        System.out.println("State\t\t:\t" + contact.state);
-        System.out.println("Zip\t\t\t:\t" + contact.zip);
-        System.out.println("Phone Number:\t" + contact.phoneNumber);
-        System.out.println("Email\t\t:\t" + contact.email);
+    void print(Set<PersonDetails> contactList) {
+        for (PersonDetails s : contactList) {
+            System.out.println(s);
+        }
     }
 
-    void edit(PersonDetails contact) {
-        InputScanner isFive = new InputScanner();
+    static void edit(PersonDetails contact) {
+        InputScanner inputScannerOne = new InputScanner();
         System.out.println("Edit the details First Name, Last Name, Address, City, State, Zip, Phone Number, Email respectively");
         System.out.print("Re-Correct First Name : ");
-        contact.setFirstName(isFive.inputString());
+        contact.setFirstName(inputScannerOne.inputString());
         System.out.print("Re-Correct Last Name : ");
-        contact.setLastName(isFive.inputString());
+        contact.setLastName(inputScannerOne.inputString());
         System.out.print("Re-Correct Address : ");
-        contact.setAddress(isFive.inputString());
+        contact.setAddress(inputScannerOne.inputString());
         System.out.print("Re-Correct City : ");
-        contact.setCity(isFive.inputString());
+        contact.setCity(inputScannerOne.inputString());
         System.out.print("Re-Correct State : ");
-        contact.setState(isFive.inputString());
+        contact.setState(inputScannerOne.inputString());
         System.out.print("Re-Correct Zip Code : ");
-        contact.setZip(isFive.inputString());
+        contact.setZip(inputScannerOne.inputString());
         System.out.print("Re-Correct Phone Number : ");
-        contact.setPhoneNumber(isFive.inputString());
+        contact.setPhoneNumber(inputScannerOne.inputString());
         System.out.print("Re-Correct Email : ");
-        contact.setEmail(isFive.inputString());
+        contact.setEmail(inputScannerOne.inputString());
+    }
+
+    void addContact(PersonDetails contact) {
+
+        InputScanner inputScannerTwo = new InputScanner();
+        Instruction instruction = new Instruction();
+        System.out.println("Enter Person contact details");
+        instruction.EnterFirstName();
+        contact.setFirstName(inputScannerTwo.inputString());
+        instruction.EnterLastName();
+        contact.setLastName(inputScannerTwo.inputString());
+        instruction.EnterAddress();
+        contact.setAddress(inputScannerTwo.inputString());
+        instruction.EnterCity();
+        contact.setCity(inputScannerTwo.inputString());
+        instruction.EnterState();
+        contact.setState(inputScannerTwo.inputString());
+        instruction.EnterZip();
+        contact.setZip(inputScannerTwo.inputString());
+        instruction.EnterPhoneNumber();
+        contact.setPhoneNumber(inputScannerTwo.inputString());
+        instruction.EnterEmail();
+        contact.setEmail(inputScannerTwo.inputString());
     }
 }

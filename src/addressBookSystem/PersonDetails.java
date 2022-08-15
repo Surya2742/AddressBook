@@ -3,6 +3,9 @@ package addressBookSystem;
 public class PersonDetails {
     public String firstName, lastName, address, city, state, zip, phoneNumber, email;
 
+    public String getFirstName() {
+        return firstName;
+    }
     public void setFirstName(String contactFirstName) {
         this.firstName = contactFirstName;
     }
@@ -33,6 +36,13 @@ public class PersonDetails {
 
     public void setEmail(String contactEmail) {
         this.email = contactEmail;
+    }
+
+    @Override
+    public String toString() {
+        return "AddressBook [firstName=" + firstName + ", lastName=" + lastName + ", address=" + address + ", city="
+                + city + ", state=" + state + ", email=" + email + ", zip=" + zip + ", phoneNumber=" + phoneNumber
+                + "]";
     }
 
 }
