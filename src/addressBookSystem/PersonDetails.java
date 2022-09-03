@@ -3,6 +3,7 @@ package addressBookSystem;
 public class PersonDetails {
     public String firstName, lastName, address, city, state, zip, phoneNumber, email;
 
+
     public String getFirstName() {
         return firstName;
     }
@@ -41,7 +42,6 @@ public class PersonDetails {
     @Override
     public String toString() {
         return "[FirstName = " + firstName + ", LastName = " + lastName + ", Address = " + address + ", City = "
-                + city + ", State = " + state + ", zip = " + zip + ", PhoneNumber = " + phoneNumber + ", eMail = " + email + "]\n";
+                + city + ", State = " + state + ", PinCode = " + zip + ", PhoneNumber = " + phoneNumber + ", eMail = " + email + "]\n";
     }
-
 }
