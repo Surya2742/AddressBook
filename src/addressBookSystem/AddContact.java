@@ -59,26 +59,40 @@ public class AddContact{
     }
     public void addContact (String listNames) {
         PersonDetails addContact = new PersonDetails();
-
         System.out.println("enter the First Name");
-        addContact.setFirstName(inputScanner.inputString() );
-        System.out.println("enter the Last Name");
-        addContact.setLastName(inputScanner.inputString());
-        System.out.println("enter the Address Name");
-        addContact.setAddress(inputScanner.inputString());
-        System.out.println("enter the City Name");
-        addContact.setCity(inputScanner.inputString());
-        System.out.println("enter the State Name");
-        addContact.setState(inputScanner.inputString());
-        System.out.println("enter the Zip/postal Code");
-        addContact.setZip(inputScanner.inputString());
-        System.out.println("enter the Phone Number");
-        addContact.setPhoneNumber(inputScanner.inputString());
-        System.out.println("enter the Email");
-        addContact.setEmail(inputScanner.inputString());
-        list.add(addContact);
-        System.out.println(list);
-        map.put(listNames, list);
+        String firstName = inputScanner.inputString();
+        addContact.setFirstName(firstName);
+        if (!checkPersonExist(firstName)){
+            System.out.println("enter the Last Name");
+            addContact.setLastName(inputScanner.inputString());
+            System.out.println("enter the Address Name");
+            addContact.setAddress(inputScanner.inputString());
+            System.out.println("enter the City Name");
+            addContact.setCity(inputScanner.inputString());
+            System.out.println("enter the State Name");
+            addContact.setState(inputScanner.inputString());
+            System.out.println("enter the Zip/postal Code");
+            addContact.setZip(inputScanner.inputString());
+            System.out.println("enter the Phone Number");
+            addContact.setPhoneNumber(inputScanner.inputString());
+            System.out.println("enter the Email");
+            addContact.setEmail(inputScanner.inputString());
+            list.add(addContact);
+            System.out.println(list);
+            map.put(listNames, list);
+        }
+        else {
+            System.out.println("Contact Already Exists in AddressBook");
+        }
+    }
+
+    public boolean checkPersonExist(String name) {
+        if(list == null)
+            return false;
+        else {
+            PersonDetails search = list.stream().filter(keyObj -> name.equalsIgnoreCase(keyObj.getFirstName())).findFirst().orElse(null);
+            return search != null;
+        }
     }
 
     public void editDetails(ArrayList<PersonDetails> list, String editName) {
