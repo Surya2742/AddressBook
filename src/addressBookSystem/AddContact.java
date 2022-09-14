@@ -29,7 +29,7 @@ public class AddContact{
             }
 
             while (condition) {
-                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View current Book, 05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by, 09. Save and Exit.\nEnter any Number to Ignore");
+                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View current Book,\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by,\n09.Count by City/State, 0.Save and Exit.\nEnter any Number to Ignore");
                 int options = inputScanner.inputInteger();
                 switch (options) {
                     case 1:
@@ -59,6 +59,9 @@ public class AddContact{
                         groupingBy();
                         break;
                     case 9:
+                        countByCityOrState();
+                        break;
+                    case 0:
                         condition = false;
                     default:
                         System.out.println("Exit from the " + listNames);
@@ -217,6 +220,29 @@ public class AddContact{
                 listOne.stream().
                         collect(Collectors.groupingBy(us -> us.getCity().toUpperCase()));
         System.out.println(collect);
+    }
+
+    public void countByCityOrState() {
+        System.out.print("1.Count by City\t2.Count by State\nEnter the Choice : ");
+        int choiceOfSearch = inputScanner.inputInteger();
+        ArrayList<PersonDetails> listOne = new ArrayList<>();
+        map.forEach((k, v) -> {
+            listOne.addAll(v);
+        });
+        switch (choiceOfSearch) {
+            case 1 -> {
+                System.out.print("Enter City Name to begin Count : ");
+                String cityName = inputScanner.inputString();
+                long b = listOne.stream().filter(p -> p.getCity().equalsIgnoreCase(cityName)).count();
+                System.out.println(b);
+            }
+            case 2 -> {
+                System.out.print("Enter State Name to begin Count : ");
+                String stateName = inputScanner.inputString();
+                long a = listOne.stream().filter(p -> p.getState().equalsIgnoreCase(stateName)).count();
+                System.out.println(a);
+            }
+        }
     }
 
     public void viewList() {
