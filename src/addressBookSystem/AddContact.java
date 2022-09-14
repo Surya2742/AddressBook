@@ -2,7 +2,9 @@ package addressBookSystem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AddContact{
     InputScanner inputScanner = new InputScanner();
@@ -27,7 +29,7 @@ public class AddContact{
             }
 
             while (condition) {
-                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View current Book, 05. Edit from Hashmap, 06. Search Person, 07.View all Book, 09. Save and Exit.\nEnter any Number to Ignore");
+                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View current Book, 05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by, 09. Save and Exit.\nEnter any Number to Ignore");
                 int options = inputScanner.inputInteger();
                 switch (options) {
                     case 1:
@@ -52,6 +54,9 @@ public class AddContact{
                         break;
                     case 7:
                         viewMap();
+                        break;
+                    case 8:
+                        groupingBy();
                         break;
                     case 9:
                         condition = false;
@@ -201,6 +206,17 @@ public class AddContact{
                 });
             }
         }
+    }
+
+    public void groupingBy() {
+        ArrayList<PersonDetails> listOne = new ArrayList<>();
+        map.forEach((k, v) -> {
+            listOne.addAll(v);
+        } );
+        Map<String, List<PersonDetails>> collect =
+                listOne.stream().
+                        collect(Collectors.groupingBy(us -> us.getCity().toUpperCase()));
+        System.out.println(collect);
     }
 
     public void viewList() {
