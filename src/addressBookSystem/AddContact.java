@@ -27,7 +27,7 @@ public class AddContact{
             }
 
             while (condition) {
-                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View details, 05. Edit from Hashmap, 09. Save and Exit.\nEnter any Number to Ignore");
+                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View current Book, 05. Edit from Hashmap, 06. Search Person, 07.View all Book, 09. Save and Exit.\nEnter any Number to Ignore");
                 int options = inputScanner.inputInteger();
                 switch (options) {
                     case 1:
@@ -42,10 +42,16 @@ public class AddContact{
                         deleteDetails(list);
                         break;
                     case 4:
-                        viewDetails();
+                        viewList();
                         break;
                     case 5:
                         editFromListOfMap();
+                        break;
+                    case 6:
+                        searchPerson();
+                        break;
+                    case 7:
+                        viewMap();
                         break;
                     case 9:
                         condition = false;
@@ -90,7 +96,9 @@ public class AddContact{
         if(list == null)
             return false;
         else {
-            PersonDetails search = list.stream().filter(keyObj -> name.equalsIgnoreCase(keyObj.getFirstName())).findFirst().orElse(null);
+            PersonDetails search = list.stream().
+                    filter(keyObj -> name.equalsIgnoreCase(keyObj.getFirstName())).
+                    findFirst().orElse(null);
             return search != null;
         }
     }
@@ -174,7 +182,32 @@ public class AddContact{
         }
     }
 
-    public void viewDetails() {
+    public void searchPerson() {
+        System.out.print("1.Search by City\t2.Search by State\nEnter the Choice : ");
+        int choiceOfSearch = inputScanner.inputInteger();
+        switch (choiceOfSearch) {
+            case 1 -> {
+                System.out.print("Enter City Name to begin Search : ");
+                String cityName = inputScanner.inputString();
+                map.forEach((k, v) -> {
+                    v.stream().filter(p -> p.getCity().equalsIgnoreCase(cityName)).sorted().forEachOrdered(System.out::println);
+                });
+            }
+            case 2 -> {
+                System.out.print("Enter State Name to begin Search : ");
+                String stateName = inputScanner.inputString();
+                map.forEach((k, v) -> {
+                    v.stream().filter(p -> p.getState().equalsIgnoreCase(stateName)).sorted().forEachOrdered(System.out::println);
+                });
+            }
+        }
+    }
+
+    public void viewList() {
+        System.out.println(list);
+    }
+
+    public void viewMap() {
         System.out.println(map);
     }
 }

@@ -11,7 +11,7 @@ public class PersonDetails {
         this.firstName = contactFirstName;
     }
 
-        public void setLastName(String contactLastName) {
+    public void setLastName(String contactLastName) {
         this.lastName = contactLastName;
     }
 
@@ -19,10 +19,16 @@ public class PersonDetails {
         this.address = contactAddress;
     }
 
+    public String getCity() {
+        return city;
+    }
     public void setCity(String contactCity) {
         this.city = contactCity;
     }
 
+    public String getState() {
+        return state;
+    }
     public void setState(String contactState) {
         this.state = contactState;
     }
