@@ -11,6 +11,9 @@ public class PersonDetails {
         this.firstName = contactFirstName;
     }
 
+    public String getLastName() {
+        return lastName;
+    }
     public void setLastName(String contactLastName) {
         this.lastName = contactLastName;
     }

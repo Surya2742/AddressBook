@@ -1,9 +1,6 @@
 package addressBookSystem;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AddContact{
@@ -29,7 +26,7 @@ public class AddContact{
             }
 
             while (condition) {
-                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View current Book,\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by,\n09.Count by City/State, 0.Save and Exit.\nEnter any Number to Ignore");
+                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View current Book,\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by,\n09.Count by City/State, 10.Sort ContactList, 0.Save and Exit.\nEnter any Number to Ignore");
                 int options = inputScanner.inputInteger();
                 switch (options) {
                     case 1:
@@ -60,6 +57,9 @@ public class AddContact{
                         break;
                     case 9:
                         countByCityOrState();
+                        break;
+                    case 10:
+                        sortContactList();
                         break;
                     case 0:
                         condition = false;
@@ -243,6 +243,20 @@ public class AddContact{
                 System.out.println(a);
             }
         }
+    }
+
+    public void sortContactList() {
+        System.out.print("1.Sort Current List\t2.Sort all AddressBook List\nEnter the Choice : ");
+        int choiceOfSearch = inputScanner.inputInteger();
+        switch(choiceOfSearch) {
+            case 1:
+                list.sort(Comparator.comparing(PersonDetails::getFirstName).thenComparing(PersonDetails::getLastName));
+            case 2:
+                map.forEach((k, v) -> {
+                    v.sort(Comparator.comparing(PersonDetails::getFirstName).thenComparing(PersonDetails::getLastName));
+                });
+        }
+
     }
 
     public void viewList() {
