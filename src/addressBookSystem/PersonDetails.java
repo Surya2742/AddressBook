@@ -36,6 +36,9 @@ public class PersonDetails {
         this.state = contactState;
     }
 
+    public String getZip() {
+        return zip;
+    }
     public void setZip(String contactZip) {
         this.zip = contactZip;
     }

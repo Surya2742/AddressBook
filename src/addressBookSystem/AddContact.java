@@ -26,7 +26,7 @@ public class AddContact{
             }
 
             while (condition) {
-                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View current Book,\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by,\n09.Count by City/State, 10.Sort ContactList, 0.Save and Exit.\nEnter any Number to Ignore");
+                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View current Book,\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by,\n09.Count by City/State, 10.Sort, 0.Save and Exit.\nEnter any Number to Ignore");
                 int options = inputScanner.inputInteger();
                 switch (options) {
                     case 1:
@@ -246,17 +246,18 @@ public class AddContact{
     }
 
     public void sortContactList() {
-        System.out.print("1.Sort Current List\t2.Sort all AddressBook List\nEnter the Choice : ");
+        System.out.print("1.ContactList by Name\t2.All AddressBook by Name\t3.ContactList by City\t4.ContactList by Zip\t5.ContactList by State\nEnter the Choice : ");
         int choiceOfSearch = inputScanner.inputInteger();
-        switch(choiceOfSearch) {
-            case 1:
-                list.sort(Comparator.comparing(PersonDetails::getFirstName).thenComparing(PersonDetails::getLastName));
-            case 2:
-                map.forEach((k, v) -> {
-                    v.sort(Comparator.comparing(PersonDetails::getFirstName).thenComparing(PersonDetails::getLastName));
-                });
+        switch (choiceOfSearch) {
+            case 1 -> list.sort(Comparator.comparing(PersonDetails::getFirstName).thenComparing(PersonDetails::getLastName));
+            case 2 -> map.forEach((k, v) -> {
+                v.sort(Comparator.comparing(PersonDetails::getFirstName).thenComparing(PersonDetails::getLastName));
+            });
+            case 3 -> list.sort(Comparator.comparing(PersonDetails::getCity));
+            case 4 -> list.sort(Comparator.comparing(PersonDetails::getZip));
+            case 5 -> list.sort(Comparator.comparing(PersonDetails::getState));
+            default -> System.out.println("Invalid Choice.");
         }
-
     }
 
     public void viewList() {
