@@ -1,6 +1,8 @@
 package addressBookSystem;
 
-public class PersonDetails {
+import java.io.Serializable;
+
+public class PersonDetails implements Serializable {
     public String firstName, lastName, address, city, state, zip, phoneNumber, email;
 
 

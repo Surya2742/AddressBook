@@ -1,5 +1,6 @@
 package addressBookSystem;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -9,7 +10,7 @@ public class AddContact{
     Map<String, ArrayList<PersonDetails>> map = new HashMap<>();
 
 
-    public void contactOperation() {
+    public void contactOperation() throws IOException, ClassNotFoundException {
         boolean condition = true;
         boolean condition2 = true;
         while (condition2) {
@@ -26,7 +27,7 @@ public class AddContact{
             }
 
             while (condition) {
-                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View current Book,\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by,\n09.Count by City/State, 10.Sort, 0.Save and Exit.\nEnter any Number to Ignore");
+                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View current Book,\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by,\n09.Count by City/State, 10.Sort, 11.Read and Write in File, 0.Save and Exit.\nEnter any Number to Ignore");
                 int options = inputScanner.inputInteger();
                 switch (options) {
                     case 1:
@@ -60,6 +61,9 @@ public class AddContact{
                         break;
                     case 10:
                         sortContactList();
+                        break;
+                    case 11:
+                        fileCreate();
                         break;
                     case 0:
                         condition = false;
@@ -258,6 +262,27 @@ public class AddContact{
             case 5 -> list.sort(Comparator.comparing(PersonDetails::getState));
             default -> System.out.println("Invalid Choice.");
         }
+    }
+
+    public void fileCreate() throws IOException, ClassNotFoundException {
+        System.out.print("1.Write to File\t2.Read from File\nEnter the Choice : ");
+        int choice = inputScanner.inputInteger();
+        if(choice == 1) {
+            FileOutputStream fos = new FileOutputStream("G:\\JAVA\\Intellij\\AddressBookSystem\\textFile.txt");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(map);
+            oos.flush();
+            oos.close();
+        }
+        else if(choice == 2) {
+            FileInputStream fis = new FileInputStream("G:\\JAVA\\Intellij\\AddressBookSystem\\textFile.txt");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            Map<String, ArrayList<PersonDetails>> mapInFile = (Map<String, ArrayList<PersonDetails>>) ois.readObject();
+            ois.close();
+            System.out.println(mapInFile);
+        }
+        else
+            System.out.println("Wrong choice.");
     }
 
     public void viewList() {
