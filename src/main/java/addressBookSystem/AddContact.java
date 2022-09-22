@@ -6,10 +6,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class AddContact {
     InputScanner inputScanner = new InputScanner();
@@ -36,7 +40,7 @@ public class AddContact {
             while (condition) {
                 System.out.println("Current Book : " + listNames + "\nInput :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View currentBook," +
                         "\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by," +
-                        "\n09.Count by City/State, 10.Sort, 11.Read/Write with File, 12.Read/Write with CSV, 0.Save and Exit.\nEnter any Number to Ignore");
+                        "\n09.Count by City/State, 10.Sort, 11.Read/Write with File, 12.Read/Write with CSV, 13. Read/Write with JSON, 0.Save and Exit.\nEnter any Number to Ignore");
                 int options = inputScanner.inputInteger();
                 switch (options) {
                     case 1:
@@ -76,6 +80,9 @@ public class AddContact {
                         break;
                     case 12:
                         csvFileReadWrite();
+                        break;
+                    case 13:
+                        jsonReadWriteFile();
                         break;
                     case 0:
                         condition = false;
@@ -301,6 +308,75 @@ public class AddContact {
             System.out.println("Wrong choice.");
     }
 
+    public void csvFileReadWrite() throws IOException {
+        System.out.print("1.Write all contacts in CSV file, 2.Read contacts from CSV, 3. Read and Load contacts from CSV, 4. Write current list in CSV file.\nEnter The Choice : ");
+        int choice = inputScanner.inputInteger();
+        switch (choice) {
+            case 1 -> writeAllContactsInCSVFile();
+            case 2 -> showReadFileFromCSV();
+            case 3 -> readAndLoadCSVToList();
+            case 4 -> writeCurrentAddressBookInCSV();
+            default -> System.out.println("Wrong Choice.");
+        }
+    }
+
+    public void writeCurrentAddressBookInJSON(File file) throws IOException {
+        file.createNewFile();
+        try (Writer writer = new FileWriter("G:\\JAVA\\Intellij\\AddressBookSystem\\addressBookJsonFile(LIST).json")) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(list, writer);
+        }
+    }
+
+    public void writeMapInJSON(File file) throws IOException {
+        file.createNewFile();
+        try (Writer writer = new FileWriter("G:\\JAVA\\Intellij\\AddressBookSystem\\addressBookJsonFile(MAP).json")) {
+            Gson gson = new GsonBuilder().create();
+            gson.toJson(map, writer);
+        }
+    }
+
+    public void loadListFromJSONToCurrentBook() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayList<PersonDetails> temp = mapper.readValue(new FileReader("G:\\JAVA\\Intellij\\AddressBookSystem\\addressBookJsonFile(LIST).json"), new TypeReference<ArrayList<PersonDetails>>() {
+        });
+        list = (ArrayList<PersonDetails>) Stream.concat(list.stream(), temp.stream()).collect(Collectors.toList());
+        System.out.println("Size of List : " + list.size());
+        map.put(listNames, list);
+    }
+
+    public void loadMapFromJSON() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        map.putAll(mapper.readValue(new FileReader("G:\\JAVA\\Intellij\\AddressBookSystem\\addressBookJsonFile(MAP).json"), new TypeReference<Map<String, ArrayList<PersonDetails>>>() {
+        }));
+        System.out.println("size of Map : " + map.size());
+        list = map.get(listNames);
+    }
+
+
+    public void jsonReadWriteFile() throws IOException {
+        System.out.print("1.Write current AddressBook in JSON file, 2.Read and load List in current AddressBook, 3. Write map in JSON file, 4. Read and load Map.\nEnter The Choice : ");
+        int choice = inputScanner.inputInteger();
+        File file = new File("G:\\JAVA\\Intellij\\AddressBookSystem\\addressBookJsonFile.json");
+        switch (choice) {
+            case 1 -> writeCurrentAddressBookInJSON(file);
+            case 2 -> loadListFromJSONToCurrentBook();
+            case 3 -> writeMapInJSON(file);
+            case 4 -> loadMapFromJSON();
+            default -> System.out.println("Wrong Input");
+        }
+    }
+
+    public void viewList() {
+        list.forEach(System.out::print);
+    }
+
+    public void viewMap() {
+        map.forEach((k,v) -> {
+            System.out.print(k + " : " + v);
+        });
+    }
+
     public void writeAllContactsInCSVFile() throws IOException {
         ArrayList<PersonDetails> listOne = listOne();
         File csvOutputFile = new File("G:\\JAVA\\Intellij\\AddressBookSystem\\addressBook.csv");
@@ -358,21 +434,19 @@ public class AddContact {
             System.out.println("The selected addressBook already exists.\n 1. To merge with list, 2. OverWrite list, 3. Ignore.");
             int a = inputScanner.inputInteger();
             switch (a) {
-                case 1:
+                case 1 -> {
                     listNames = temp;
                     list = map.get(listNames);
                     list = (ArrayList<PersonDetails>) Stream.concat(list.stream(), usersIter.readAll().stream()).distinct().collect(Collectors.toList());
                     map.put(listNames, list);
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     listNames = temp;
                     list = map.get(listNames);
                     list = (ArrayList<PersonDetails>) usersIter.readAll();
                     map.put(listNames, list);
-                    break;
-                case 3:
-                    System.out.println("Ignored.");
-                    break;
+                }
+                case 3 -> System.out.println("Ignored.");
             }
         }
         else {
@@ -380,37 +454,5 @@ public class AddContact {
             list = (ArrayList<PersonDetails>) usersIter.readAll();
             map.put(listNames, list);
         }
-    }
-
-    public void csvFileReadWrite() throws IOException {
-        System.out.print("1.Write all contacts in CSV file, 2.Read contacts from CSV, 3. Read and Load contacts from CSV, 4. Write current list in CSV file.\nEnter The Choice : ");
-        int choice = inputScanner.inputInteger();
-        switch (choice) {
-            case 1:
-                writeAllContactsInCSVFile();
-                break;
-            case 2:
-                showReadFileFromCSV();
-                break;
-            case 3:
-                readAndLoadCSVToList();
-                break;
-            case 4:
-                writeCurrentAddressBookInCSV();
-                break;
-            default:
-                System.out.println("Wrong Choice.");
-                break;
-            }
-        }
-
-    public void viewList() {
-        list.forEach(System.out::print);
-    }
-
-    public void viewMap() {
-        map.forEach((k,v) -> {
-            System.out.print(k + " : " + v);
-        });
     }
 }
