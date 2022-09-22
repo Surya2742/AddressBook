@@ -3,11 +3,19 @@ package addressBookSystem;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class AddContact{
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
+public class AddContact {
     InputScanner inputScanner = new InputScanner();
     ArrayList<PersonDetails> list;
     Map<String, ArrayList<PersonDetails>> map = new HashMap<>();
+    String listNames;
 
 
     public void contactOperation() throws IOException, ClassNotFoundException {
@@ -17,17 +25,18 @@ public class AddContact{
             System.out.println("New/Select AddressBook");
             System.out.print("Enter Integer Input for AddressBookName : ");
             int i = inputScanner.inputInteger();
-            String listNames = "AddressBook" + (i);
+            listNames = "AddressBook" + (i);
             if (map.containsKey(listNames)) {
-                System.out.println("The selected addressBook already exists. Continue to make changes or exit with 9");
+                System.out.println("The selected addressBook already exists. Continue to make changes or exit with 0");
                 list = map.get(listNames);
             } else {
                 System.out.println("New addressBook is created.");
                 list = new ArrayList<>();
             }
-
             while (condition) {
-                System.out.println("Input :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View current Book,\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by,\n09.Count by City/State, 10.Sort, 11.Read and Write in File, 0.Save and Exit.\nEnter any Number to Ignore");
+                System.out.println("Current Book : " + listNames + "\nInput :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View currentBook," +
+                        "\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by," +
+                        "\n09.Count by City/State, 10.Sort, 11.Read/Write with File, 12.Read/Write with CSV, 0.Save and Exit.\nEnter any Number to Ignore");
                 int options = inputScanner.inputInteger();
                 switch (options) {
                     case 1:
@@ -65,6 +74,9 @@ public class AddContact{
                     case 11:
                         fileCreate();
                         break;
+                    case 12:
+                        csvFileReadWrite();
+                        break;
                     case 0:
                         condition = false;
                     default:
@@ -75,12 +87,13 @@ public class AddContact{
             contactOperation();
         }
     }
-    public void addContact (String listNames) {
+
+    public void addContact(String listNames) {
         PersonDetails addContact = new PersonDetails();
         System.out.println("enter the First Name");
         String firstName = inputScanner.inputString();
         addContact.setFirstName(firstName);
-        if (!checkPersonExist(firstName)){
+        if (!checkPersonExist(firstName)) {
             System.out.println("enter the Last Name");
             addContact.setLastName(inputScanner.inputString());
             System.out.println("enter the Address Name");
@@ -96,16 +109,15 @@ public class AddContact{
             System.out.println("enter the Email");
             addContact.setEmail(inputScanner.inputString());
             list.add(addContact);
-            System.out.println(list);
+            list.forEach(System.out::print);
             map.put(listNames, list);
-        }
-        else {
+        } else {
             System.out.println("Contact Already Exists in AddressBook");
         }
     }
 
     public boolean checkPersonExist(String name) {
-        if(list == null)
+        if (list == null)
             return false;
         else {
             PersonDetails search = list.stream().
@@ -175,7 +187,7 @@ public class AddContact{
     public void deleteDetails(ArrayList<PersonDetails> list) {
         System.out.print("Enter the name to delete Contact : ");
         String deleteName = inputScanner.inputString();
-        for(int i = 0; i < list.size(); i++ ) {
+        for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getFirstName().equalsIgnoreCase(deleteName)) {
                 list.remove(i);
                 System.out.println("The contact Details for " + deleteName + " is deleted.");
@@ -202,49 +214,53 @@ public class AddContact{
                 System.out.print("Enter City Name to begin Search : ");
                 String cityName = inputScanner.inputString();
                 map.forEach((k, v) -> {
-                    v.stream().filter(p -> p.getCity().equalsIgnoreCase(cityName)).sorted().forEachOrdered(System.out::println);
+                    v.stream().filter(p -> p.getCity().equalsIgnoreCase(cityName)).sorted().forEachOrdered(System.out::print);
                 });
             }
             case 2 -> {
                 System.out.print("Enter State Name to begin Search : ");
                 String stateName = inputScanner.inputString();
                 map.forEach((k, v) -> {
-                    v.stream().filter(p -> p.getState().equalsIgnoreCase(stateName)).sorted().forEachOrdered(System.out::println);
+                    v.stream().filter(p -> p.getState().equalsIgnoreCase(stateName)).sorted().forEachOrdered(System.out::print);
                 });
             }
         }
     }
 
     public void groupingBy() {
-        ArrayList<PersonDetails> listOne = new ArrayList<>();
-        map.forEach((k, v) -> {
-            listOne.addAll(v);
-        } );
+        ArrayList<PersonDetails> listOne = listOne();
         Map<String, List<PersonDetails>> collect =
                 listOne.stream().
                         collect(Collectors.groupingBy(us -> us.getCity().toUpperCase()));
-        System.out.println(collect);
+        collect.forEach((k, v) -> {
+            System.out.print(k + " : " + v);
+        });
+    }
+
+    public ArrayList<PersonDetails> listOne() {
+        ArrayList<PersonDetails> listOne = new ArrayList<>();
+        map.forEach((k, v) -> {
+            listOne.addAll(v);
+        });
+        return listOne;
     }
 
     public void countByCityOrState() {
         System.out.print("1.Count by City\t2.Count by State\nEnter the Choice : ");
         int choiceOfSearch = inputScanner.inputInteger();
-        ArrayList<PersonDetails> listOne = new ArrayList<>();
-        map.forEach((k, v) -> {
-            listOne.addAll(v);
-        });
+        ArrayList<PersonDetails> listOne = listOne();
         switch (choiceOfSearch) {
             case 1 -> {
                 System.out.print("Enter City Name to begin Count : ");
                 String cityName = inputScanner.inputString();
                 long b = listOne.stream().filter(p -> p.getCity().equalsIgnoreCase(cityName)).count();
-                System.out.println(b);
+                System.out.println("Only " + b + " Contact found.");
             }
             case 2 -> {
                 System.out.print("Enter State Name to begin Count : ");
                 String stateName = inputScanner.inputString();
                 long a = listOne.stream().filter(p -> p.getState().equalsIgnoreCase(stateName)).count();
-                System.out.println(a);
+                System.out.println("Only " + a + " Contact found.");
             }
         }
     }
@@ -267,29 +283,134 @@ public class AddContact{
     public void fileCreate() throws IOException, ClassNotFoundException {
         System.out.print("1.Write to File\t2.Read from File\nEnter the Choice : ");
         int choice = inputScanner.inputInteger();
-        if(choice == 1) {
+        if (choice == 1) {
             FileOutputStream fos = new FileOutputStream("G:\\JAVA\\Intellij\\AddressBookSystem\\textFile.txt");
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(map);
             oos.flush();
             oos.close();
-        }
-        else if(choice == 2) {
+        } else if (choice == 2) {
             FileInputStream fis = new FileInputStream("G:\\JAVA\\Intellij\\AddressBookSystem\\textFile.txt");
             ObjectInputStream ois = new ObjectInputStream(fis);
             Map<String, ArrayList<PersonDetails>> mapInFile = (Map<String, ArrayList<PersonDetails>>) ois.readObject();
             ois.close();
-            System.out.println(mapInFile);
-        }
-        else
+            mapInFile.forEach((k, v) -> {
+                System.out.print(k + " : " + v);
+            });
+        } else
             System.out.println("Wrong choice.");
     }
 
+    public void writeAllContactsInCSVFile() throws IOException {
+        ArrayList<PersonDetails> listOne = listOne();
+        File csvOutputFile = new File("G:\\JAVA\\Intellij\\AddressBookSystem\\addressBook.csv");
+        CsvMapper mapper = new CsvMapper();
+        mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true);
+        CsvSchema schema = CsvSchema.builder().setUseHeader(true)
+                .addColumn("firstName").addColumn("lastName").addColumn("address")
+                .addColumn("city").addColumn("state").addColumn("zip")
+                .addColumn("phoneNumber").addColumn("email")
+                .build();
+        ObjectWriter writer = mapper.writerFor(PersonDetails.class).with(schema);
+        writer.writeValues(csvOutputFile).writeAll(listOne);
+    }
+
+    public void writeCurrentAddressBookInCSV() throws IOException {
+        File csvOutputFile = new File("G:\\JAVA\\Intellij\\AddressBookSystem\\addressBook.csv");
+        CsvMapper mapper = new CsvMapper();
+        mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true);
+        CsvSchema schema = CsvSchema.builder().setUseHeader(true)
+                .addColumn("firstName").addColumn("lastName").addColumn("address")
+                .addColumn("city").addColumn("state").addColumn("zip")
+                .addColumn("phoneNumber").addColumn("email")
+                .build();
+        ObjectWriter writer = mapper.writerFor(PersonDetails.class).with(schema);
+        writer.writeValues(csvOutputFile).writeAll(list);
+    }
+
+    public MappingIterator<PersonDetails> readContactsFromCSV() throws IOException {
+        File csvFile = new File("G:\\JAVA\\Intellij\\AddressBookSystem\\addressBook.csv");
+        CsvMapper csvMapper = new CsvMapper();
+        CsvSchema csvSchema = CsvSchema.builder().setUseHeader(true)
+                .addColumn("firstName").addColumn("lastName").addColumn("address")
+                .addColumn("city").addColumn("state").addColumn("zip")
+                .addColumn("phoneNumber").addColumn("email")
+                .build();
+        MappingIterator<PersonDetails> usersIter = csvMapper
+                .readerWithTypedSchemaFor(PersonDetails.class)
+                .with(csvSchema)
+                .readValues(csvFile);
+        return usersIter;
+    }
+
+    public void showReadFileFromCSV() throws IOException {
+        MappingIterator<PersonDetails> usersIter = readContactsFromCSV();
+        List<PersonDetails> users = usersIter.readAll();
+        users.forEach(System.out::print);
+    }
+
+    public void readAndLoadCSVToList() throws IOException {
+        MappingIterator<PersonDetails> usersIter = readContactsFromCSV();
+        System.out.print("Enter Integer Input for AddressBookName : ");
+        int i = inputScanner.inputInteger();
+        String temp = "AddressBook" + (i);
+        if (map.containsKey(temp)) {
+            System.out.println("The selected addressBook already exists.\n 1. To merge with list, 2. OverWrite list, 3. Ignore.");
+            int a = inputScanner.inputInteger();
+            switch (a) {
+                case 1:
+                    listNames = temp;
+                    list = map.get(listNames);
+                    list = (ArrayList<PersonDetails>) Stream.concat(list.stream(), usersIter.readAll().stream()).distinct().collect(Collectors.toList());
+                    map.put(listNames, list);
+                    break;
+                case 2:
+                    listNames = temp;
+                    list = map.get(listNames);
+                    list = (ArrayList<PersonDetails>) usersIter.readAll();
+                    map.put(listNames, list);
+                    break;
+                case 3:
+                    System.out.println("Ignored.");
+                    break;
+            }
+        }
+        else {
+            System.out.println("New addressBook is created.");
+            list = (ArrayList<PersonDetails>) usersIter.readAll();
+            map.put(listNames, list);
+        }
+    }
+
+    public void csvFileReadWrite() throws IOException {
+        System.out.print("1.Write all contacts in CSV file, 2.Read contacts from CSV, 3. Read and Load contacts from CSV, 4. Write current list in CSV file.\nEnter The Choice : ");
+        int choice = inputScanner.inputInteger();
+        switch (choice) {
+            case 1:
+                writeAllContactsInCSVFile();
+                break;
+            case 2:
+                showReadFileFromCSV();
+                break;
+            case 3:
+                readAndLoadCSVToList();
+                break;
+            case 4:
+                writeCurrentAddressBookInCSV();
+                break;
+            default:
+                System.out.println("Wrong Choice.");
+                break;
+            }
+        }
+
     public void viewList() {
-        System.out.println(list);
+        list.forEach(System.out::print);
     }
 
     public void viewMap() {
-        System.out.println(map);
+        map.forEach((k,v) -> {
+            System.out.print(k + " : " + v);
+        });
     }
 }
