@@ -1,6 +1,7 @@
 package addressBookSystem;
 
 import java.io.*;
+import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,7 +23,7 @@ public class AddContact {
     String listNames;
 
 
-    public void contactOperation() throws IOException, ClassNotFoundException {
+    public void contactOperation() throws IOException, ClassNotFoundException, SQLException {
         boolean condition = true;
         boolean condition2 = true;
         while (condition2) {
@@ -40,7 +41,8 @@ public class AddContact {
             while (condition) {
                 System.out.println("Current Book : " + listNames + "\nInput :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View currentBook," +
                         "\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by," +
-                        "\n09.Count by City/State, 10.Sort, 11.Read/Write with File, 12.Read/Write with CSV, 13. Read/Write with JSON, 0.Save and Exit.\nEnter any Number to Ignore");
+                        "\n09.Count by City/State, 10.Sort, 11.Read/Write with File, 12.Read/Write with CSV, 13. Read/Write with JSON," +
+                        "\n14. Retrieve contacts from DB, 0.Save and Exit.\nEnter any Number to Ignore");
                 int options = inputScanner.inputInteger();
                 switch (options) {
                     case 1:
@@ -83,6 +85,9 @@ public class AddContact {
                         break;
                     case 13:
                         jsonReadWriteFile();
+                        break;
+                    case 14:
+                        retrieveEntryFromDB();
                         break;
                     case 0:
                         condition = false;
@@ -454,5 +459,37 @@ public class AddContact {
             list = (ArrayList<PersonDetails>) usersIter.readAll();
             map.put(listNames, list);
         }
+    }
+
+    public Connection getConnectionSQL() throws SQLException {
+        String jdbcURL = "jdbc:mysql://localhost:3306/addressbook";
+        String userName = "root";
+        String password = "Surya@123";
+        Connection con = DriverManager.getConnection(jdbcURL, userName, password);
+        if(con.isClosed())
+            System.out.println("Connection is not Established");
+        else
+            System.out.println("Connection Established successfully. " + con);
+        return con;
+    }
+
+    public void retrieveEntryFromDB() throws SQLException {
+        Connection connect = getConnectionSQL();
+        String FETCH = "SELECT * FROM addressbookdb";
+        List<PersonDetails> users = new ArrayList<>();
+        ResultSet set = connect.createStatement().executeQuery(FETCH);
+        while (set.next()) {
+            PersonDetails contactInfo = new PersonDetails();
+            contactInfo.setFirstName(set.getString("FirstName"));
+            contactInfo.setLastName(set.getString("LastName"));
+            contactInfo.setAddress(set.getString("Address"));
+            contactInfo.setCity(set.getString("city"));
+            contactInfo.setState(set.getString("State"));
+            contactInfo.setZip(set.getString("PinCode"));
+            contactInfo.setPhoneNumber(set.getString("PhoneNumber"));
+            contactInfo.setEmail(set.getString("Email"));
+            users.add(contactInfo);
+        }
+        users.forEach(System.out::print);
     }
 }
