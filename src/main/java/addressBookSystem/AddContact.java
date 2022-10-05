@@ -15,6 +15,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mysql.cj.xdevapi.Table;
 
 public class AddContact {
     InputScanner inputScanner = new InputScanner();
@@ -42,7 +43,7 @@ public class AddContact {
                 System.out.println("Current Book : " + listNames + "\nInput :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View currentBook," +
                         "\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by," +
                         "\n09.Count by City/State, 10.Sort, 11.Read/Write with File, 12.Read/Write with CSV, 13. Read/Write with JSON," +
-                        "\n14. Retrieve contacts from DB, 0.Save and Exit.\nEnter any Number to Ignore");
+                        "\n14. Retrieve contacts from DB, 15. Update contacts in DB 0.Save and Exit.\nEnter any Number to Ignore");
                 int options = inputScanner.inputInteger();
                 switch (options) {
                     case 1:
@@ -88,6 +89,9 @@ public class AddContact {
                         break;
                     case 14:
                         retrieveEntryFromDB();
+                        break;
+                    case 15:
+                        updateEntryInDB();
                         break;
                     case 0:
                         condition = false;
@@ -377,7 +381,7 @@ public class AddContact {
     }
 
     public void viewMap() {
-        map.forEach((k,v) -> {
+        map.forEach((k, v) -> {
             System.out.print(k + " : " + v);
         });
     }
@@ -453,8 +457,7 @@ public class AddContact {
                 }
                 case 3 -> System.out.println("Ignored.");
             }
-        }
-        else {
+        } else {
             System.out.println("New addressBook is created.");
             list = (ArrayList<PersonDetails>) usersIter.readAll();
             map.put(listNames, list);
@@ -466,7 +469,7 @@ public class AddContact {
         String userName = "root";
         String password = "Surya@123";
         Connection con = DriverManager.getConnection(jdbcURL, userName, password);
-        if(con.isClosed())
+        if (con.isClosed())
             System.out.println("Connection is not Established");
         else
             System.out.println("Connection Established successfully. " + con);
@@ -476,8 +479,13 @@ public class AddContact {
     public void retrieveEntryFromDB() throws SQLException {
         Connection connect = getConnectionSQL();
         String FETCH = "SELECT * FROM addressbookdb";
-        List<PersonDetails> users = new ArrayList<>();
         ResultSet set = connect.createStatement().executeQuery(FETCH);
+        printDB(set);
+        connect.close();
+    }
+
+    public void printDB(ResultSet set) throws SQLException {
+        List<PersonDetails> users = new ArrayList<>();
         while (set.next()) {
             PersonDetails contactInfo = new PersonDetails();
             contactInfo.setFirstName(set.getString("FirstName"));
@@ -491,5 +499,86 @@ public class AddContact {
             users.add(contactInfo);
         }
         users.forEach(System.out::print);
+    }
+
+    public void updateEntryInDB() throws SQLException {
+        int size = 0;
+        Connection connect = getConnectionSQL();
+        System.out.print("Enter First Name to search : ");
+        String verifyFirstName = inputScanner.inputString();
+        String abc = "SELECT * FROM addressbookdb where FirstName = '" + verifyFirstName + "'";
+        ResultSet set = connect.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(abc);
+        while (set.next()) {
+            size++;
+        }
+        set.beforeFirst();
+        if (size > 0) {
+            printDB(set);
+            System.out.println("Enter the number to update contact details. \n1. First Name 2. Last Name 3. Address 4. City 5. State 6. PinCode 7. Phone Number 8.Email");
+            int updateChoice = inputScanner.inputInteger();
+
+            switch (updateChoice) {
+                case 1 -> {
+                    System.out.print("Enter the First name to update : ");
+                    String fName = inputScanner.inputString();
+                    String query = "Update addressbookdb set FirstName = '" + fName + "' where FirstName = '" + verifyFirstName + "'";
+                    connect.createStatement().executeUpdate(query);
+                    System.out.println("The First Name is Updated");
+                }
+                case 2 -> {
+                    System.out.print("Enter the Last name to update : ");
+                    String lName = inputScanner.inputString();
+                    String query = "Update addressbookdb set LastName = '" + lName + "' where FirstName = '" + verifyFirstName + "'";
+                    connect.createStatement().executeUpdate(query);
+                    System.out.println("The Last Name is Updated");
+                }
+                case 3 -> {
+                    System.out.print("Enter the Address to Update : ");
+                    String address = inputScanner.inputString();
+                    String query = "Update addressbookdb set Address = '" + address + "' where FirstName = '" + verifyFirstName + "'";
+                    connect.createStatement().executeUpdate(query);
+                    System.out.println("The Address is Updated");
+                }
+                case 4 -> {
+                    System.out.print("Enter the City to Update : ");
+                    String city = inputScanner.inputString();
+                    String query = "Update addressbookdb set city = '" + city + "' where FirstName = '" + verifyFirstName + "'";
+                    connect.createStatement().executeUpdate(query);
+                    System.out.println("The City is Updated");
+                }
+                case 5 -> {
+                    System.out.print("Enter the State to Update : ");
+                    String state = inputScanner.inputString();
+                    String query = "Update addressbookdb set State = '" + state + "' where FirstName = '" + verifyFirstName + "'";
+                    connect.createStatement().executeUpdate(query);
+                    System.out.println("The State is Updated");
+                }
+                case 6 -> {
+                    System.out.print("Enter the PinCode to Update : ");
+                    String zip = inputScanner.inputString();
+                    String query = "Update addressbookdb set PinCode = '" + zip + "' where FirstName = '" + verifyFirstName + "'";
+                    connect.createStatement().executeUpdate(query);
+                    System.out.println("The Pincode/Postalcode is Updated");
+                }
+                case 7 -> {
+                    System.out.print("Enter the Phone Number to Update : ");
+                    String pNumber = inputScanner.inputString();
+                    String query = "Update addressbookdb set PhoneNumber = '" + pNumber + "' where FirstName = '" + verifyFirstName + "'";
+                    connect.createStatement().executeUpdate(query);
+                    System.out.println("The Phone Number is Updated");
+                }
+                case 8 -> {
+                    System.out.print("Enter the eMail to Update : ");
+                    String eMail = inputScanner.inputString();
+                    String query = "Update addressbookdb set Email = '" + eMail + "' where FirstName = '" + verifyFirstName + "'";
+                    connect.createStatement().executeUpdate(query);
+                    System.out.println("The eMail is Updated");
+                }
+                default -> System.out.println("you have not updated any details");
+            }
+        }
+        else
+            System.out.println("Name didn't matched.");
+        connect.close();
     }
 }
