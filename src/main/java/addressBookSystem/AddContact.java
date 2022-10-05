@@ -15,7 +15,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mysql.cj.xdevapi.Table;
 
 public class AddContact {
     InputScanner inputScanner = new InputScanner();
@@ -43,7 +42,7 @@ public class AddContact {
                 System.out.println("Current Book : " + listNames + "\nInput :\n01. Add Details, 02. Edit details, 03. Delete details, 04. View currentBook," +
                         "\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by," +
                         "\n09.Count by City/State, 10.Sort, 11.Read/Write with File, 12.Read/Write with CSV, 13. Read/Write with JSON," +
-                        "\n14. Retrieve contacts from DB, 15. Update contacts in DB 0.Save and Exit.\nEnter any Number to Ignore");
+                        "\n14. Retrieve contacts from DB, 15. Update contacts in DB, 16. Retrieve contacts between Date, 0.Save and Exit.\nEnter any Number to Ignore");
                 int options = inputScanner.inputInteger();
                 switch (options) {
                     case 1:
@@ -92,6 +91,9 @@ public class AddContact {
                         break;
                     case 15:
                         updateEntryInDB();
+                        break;
+                    case 16:
+                        retrieveEntryDateWise();
                         break;
                     case 0:
                         condition = false;
@@ -580,5 +582,14 @@ public class AddContact {
         else
             System.out.println("Name didn't matched.");
         connect.close();
+    }
+
+    public void retrieveEntryDateWise() throws SQLException {
+        Connection connect = getConnectionSQL();
+        System.out.println("Enter the Date of Joining (YYYY-MM-DD) \nEg: 2022-10-05");
+        String date = inputScanner.inputString();
+        String sql = "select * from addressbookdb where date_added between cast('"+ date + "' as date) and date(now())";
+        ResultSet set = connect.createStatement().executeQuery(sql);
+        printDB(set);
     }
 }
