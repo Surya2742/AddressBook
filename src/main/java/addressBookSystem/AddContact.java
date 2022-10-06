@@ -43,7 +43,7 @@ public class AddContact {
                         "\n05. Edit from Hashmap, 06. Search Person, 07.View all Book, 08.Grouping by," +
                         "\n09.Count by City/State, 10.Sort, 11.Read/Write with File, 12.Read/Write with CSV, 13. Read/Write with JSON," +
                         "\n14. Retrieve contacts from DB, 15. Update contacts in DB, 16. Retrieve contacts between Date," +
-                        "\n17. Retrieve contacts from DB by city/State, 0.Save and Exit.\nEnter any Number to Ignore");
+                        "\n17. Retrieve contacts from DB by city/State, 18. Add contact to DB, 0.Save and Exit.\nEnter any Number to Ignore");
                 int options = inputScanner.inputInteger();
                 switch (options) {
                     case 1:
@@ -98,6 +98,9 @@ public class AddContact {
                         break;
                     case 17:
                         retrieveEntryByCityOrState();
+                        break;
+                    case 18:
+                        addContactsToDB();
                         break;
                     case 0:
                         condition = false;
@@ -507,16 +510,21 @@ public class AddContact {
         users.forEach(System.out::print);
     }
 
-    public void updateEntryInDB() throws SQLException {
+    public int verifyFirstNameExistInDB(ResultSet set) throws SQLException {
         int size = 0;
+        while (set.next()) {
+            size++;
+        }
+        return size;
+    }
+
+    public void updateEntryInDB() throws SQLException {
         Connection connect = getConnectionSQL();
         System.out.print("Enter First Name to search : ");
         String verifyFirstName = inputScanner.inputString();
         String abc = "SELECT * FROM addressbookdb where FirstName = '" + verifyFirstName + "'";
         ResultSet set = connect.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(abc);
-        while (set.next()) {
-            size++;
-        }
+        int size = verifyFirstNameExistInDB(set);
         set.beforeFirst();
         if (size > 0) {
             printDB(set);
@@ -607,6 +615,45 @@ public class AddContact {
         String sql = "select * from addressbookdb where city = '" + city + "' or State = '" + state + "'";
         ResultSet set = connect.createStatement().executeQuery(sql);
         printDB(set);
+        connect.close();
+    }
+
+    public void addContactsToDB() throws SQLException {
+        Connection connect = getConnectionSQL();
+        System.out.println("enter the First Name");
+        String firstName = inputScanner.inputString();
+        System.out.println("enter the Last Name");
+        String lastName = inputScanner.inputString();
+        System.out.println("enter the Address Name");
+        String address = inputScanner.inputString();
+        System.out.println("enter the City Name");
+        String city = inputScanner.inputString();
+        System.out.println("enter the State Name");
+        String state = inputScanner.inputString();
+        System.out.println("enter the Zip/postal Code");
+        String zip = inputScanner.inputString();
+        System.out.println("enter the Phone Number");
+        String pNumber = inputScanner.inputString();
+        System.out.println("enter the Email");
+        String email = inputScanner.inputString();
+        String abc = "SELECT * FROM addressbookdb where FirstName = '" + firstName + "' and LastName = '" + lastName +
+                "' and Address = '" + address + "' and city = '" + city + "' and State = '" + state +"' and PinCode = '" + zip +
+                "' and PhoneNumber = '" + pNumber + "' and Email = '" + email + "';";
+        ResultSet set = connect.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(abc);
+        int size = verifyFirstNameExistInDB(set);
+        if (size == 0) {
+            System.out.println("enter the Date Of Joining format: (yyyy-mm-dd)");
+            String doj = inputScanner.inputString();
+            String sql = "insert into addressbookdb(FirstName,LastName,Address,city,State,PinCode,PhoneNumber,Email,date_added)" +
+                    "values('" + firstName + "','" + lastName + "','" + address + "','" + city +
+                    "','" + state + "','" + zip + "','" + pNumber + "','" +
+                    email + "','" + doj + "');";
+            connect.createStatement().executeUpdate(sql);
+            System.out.println("Contact is added Successfully");
+        }
+        else {
+            System.out.println("Contact Name Already Exist");
+        }
         connect.close();
     }
 }
